@@ -73,8 +73,8 @@ exports.uploadResume = async (req, res) => {
       keyword: [],
       birth_date,
       gender,
-      address: encrypt(address),
-      phone: encrypt(phone),
+      address,
+      phone,
       current_salary,
       desired_salary,
       createdAt: new Date(),
@@ -165,8 +165,9 @@ exports.uploadResume = async (req, res) => {
 
     // 테스트 결과 저장
     if (companyTest) {
-      const companytestObject = JSON.parse(companyTest);
-      const companyTestData = JSON.parse(companytestObject.companyTest);
+      //const companytestObject = JSON.parse(companyTest);
+      //const companyTestData = JSON.parse(companytestObject.companyTest);
+      const companyTestData = JSON.parse(companyTest);
 
       await CompanyTest.create({
         resume_id: resumeId,

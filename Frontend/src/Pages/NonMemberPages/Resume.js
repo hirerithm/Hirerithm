@@ -90,7 +90,7 @@ const Resume = ({ resumeData, dispatch }) => {
       certificates: JSON.stringify(certificates),
       skills: JSON.stringify(skills),
       otherinfo: JSON.stringify(otherinfo),
-      companyTest: JSON.stringify(companyTest),
+      companyTest,
     };
 
     try {

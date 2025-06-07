@@ -6,7 +6,7 @@ const careerSchema = new mongoose.Schema({
     ref: "Resume",
     required: true,
   },
-  company_name: { type: String},
+  company_name: { type: String },
   position: { type: String },
   description: { type: String },
   start_year: { type: String },
@@ -16,7 +16,7 @@ const careerSchema = new mongoose.Schema({
     //required: true,
     validate: {
       validator: function (value) {
-        return !value || /^\d{4}\.\d{1,2}$/.test(value);
+        return !value || /^\d{6}$/.test(value);
       },
     },
   },

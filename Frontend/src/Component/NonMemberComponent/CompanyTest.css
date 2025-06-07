@@ -121,21 +121,21 @@
 /* 라디오 버튼 크기 조정 클래스 */
 
 .size-sm input[type="radio"] {
-  width: 75px;
-  height: 75px;
-  margin-top: 40px;
+  width: 85px;
+  height: 85px;
+  /*margin-top: 40px;*/
 }
 
 .size-md input[type="radio"] {
-  width: 75px;
-  height: 75px;
-  margin-top: 30px;
+  width: 85px;
+  height: 85px;
+  /*margin-top: 30px;*/
 }
 
 .size-lg input[type="radio"] {
-  width: 80px;
-  height: 80px;
-  margin-top: 20px;
+  width: 85px;
+  height: 85px;
+  /*margin-top: 20px;*/
 }
 
 /* 제출 */
