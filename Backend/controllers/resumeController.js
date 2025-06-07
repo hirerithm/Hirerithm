@@ -455,8 +455,33 @@ exports.deletewishlistResume = async (req, res) => {
 };
 
 exports.sortPopularResume = async (req, res) => {
-  // TODO : 인기순으로 이력서 정렬
-  console.log("구현X");
+  // 인기순으로 이력서 정렬
+  try {
+    const sorted_resumes = await Resume.aggregate([
+      {
+        $addFields: {
+          wishlistCount: { $size: "$wishlist" },
+        },
+      },
+      {
+        $sort: { wishlistCount: -1 },
+      },
+    ]);
+    res.status(200).json(sorted_resumes);
+  } catch (err) {
+    console.error("정렬 오류:", err);
+    res.status(500).json({ message: "서버 오류 발생" });
+  }
+};
+
+exports.sortLatestResume = async (req, res) => {
+  try {
+    const resumes = await Resume.find().sort({ createdAt: -1 });
+    res.status(200).json(resumes);
+  } catch (err) {
+    console.error("정렬 오류:", err);
+    res.status(500).json({ message: "서버 오류 발생" });
+  }
 };
 
 exports.detailResume = async (req, res) => {
