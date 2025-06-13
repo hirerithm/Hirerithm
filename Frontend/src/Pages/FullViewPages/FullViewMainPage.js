@@ -43,12 +43,16 @@ const FullViewMainPage = () => {
   // 후보자 데이터 받아오기
   const getCandidateList = () => {
     setIsLoading(true);
+    let url = `${BACK_URL}/resume/list`;
+    if (sortType === "popular") {
+      url = `${BACK_URL}/resume/wishlist/sort/popular`;
+    } else if (sortType === "latest") {
+      url = `${BACK_URL}/resume/wishlist/sort/latest`;
+    }
     axios
-      .get(`${BACK_URL}/resume/list`)
+      .get(url)
       .then((res) => {
         setCandidateData(res.data);
-        console.log("후보자 0번:", res.data[0]); // 개발용 데이터 예시
-        console.log("후보자 1번:", res.data[1]);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -319,10 +323,17 @@ const FullViewMainPage = () => {
               userEmail={userEmail}
               liked={wishlist.includes(candidate.resume_id)}
               onToggleWishlist={(resumeId, isLiked) => {
-                setWishlist((prev) =>
-                  isLiked
-                    ? [...prev, resumeId]
-                    : prev.filter((id) => id !== resumeId)
+                setCandidateData((prev) =>
+                  prev.map((c) =>
+                    c.resume_id === resumeId
+                      ? {
+                          ...c,
+                          wishlist: isLiked
+                            ? [...(c.wishlist || []), userEmail]
+                            : (c.wishlist || []).filter((e) => e !== userEmail),
+                        }
+                      : c
+                  )
                 );
               }}
             />

@@ -334,3 +334,15 @@
   transform: scale(1.2);
   transition: transform 0.2s ease;
 }
+
+.wishlist-count-text {
+  position: absolute;
+  top: 30px;
+  right: 25px;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  width: auto;
+  height: auto;
+  cursor: pointer;
+}
