@@ -58,6 +58,7 @@ const DBItem = ({
       <button className="heart-toggle-btn" onClick={toggleWishlist}>
         <img alt="찜하기" src={liked ? FilledHeart : EmptyHeart} />
       </button>
+      <p className="wishlist-count-text">{candidate.wishlist?.length || 0}</p>
     </div>
   );
 };
