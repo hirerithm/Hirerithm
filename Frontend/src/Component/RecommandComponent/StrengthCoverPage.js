@@ -71,7 +71,7 @@ const StrengthCoverPage = forwardRef(({ summary, isGeneratingPdf }, ref) => {
               <td>3.8 / 5.0</td>
             </tr>
             <tr>
-              <td>5</td>
+              <td>6</td>
               <td>최지우 (25), 여</td>
               <td>3.5 / 5.0</td>
             </tr>
