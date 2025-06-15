@@ -51,7 +51,7 @@ function App() {
         />
         <Route
           path="/recommend_strength/result"
-          element={<StrengthResult result={recommendResult} />}
+          element={<StrengthResult recommendResult={recommendResult} />}
         />
 
         {/* NonMember(구직자) 이력서 등록 페이지 */}

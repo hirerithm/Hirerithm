@@ -115,7 +115,7 @@ const CorporateImageResult = () => {
     };
 
     fetchRecommendations();
-  }, [companyName, BACK_URL]);
+  }, [companyName]);
 
   return (
     <div className="image-recommend-result_wrapper">
