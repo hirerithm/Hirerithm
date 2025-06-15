@@ -153,8 +153,10 @@ ${resumeData
 {
   "recommendations": [
     {
+      "name": "홍길동",
       "resume_id": "...",
-      "recruiter_keyword": ["경력", "React", "글로벌 역량"],"recruiter_keyword_description": {
+      "resume_keyword": [resume_id에 해당하는 keyword 목록],
+      "recruiter_keyword": [회사가 중요하게 여기는 핵심 키워드],"recruiter_keyword_description": {
         "경력": "다양한 직무 경험과 지속적인 업무 수행을 통해 쌓은 전문성이 돋보입니다.",
         "React": "React를 활용한 프로젝트를 주도적으로 수행하며 UI 개발에 대한 이해도가 높습니다.",
         "글로벌 역량": "해외 기업과 협업하거나 다문화 환경에서 일한 경험이 국제적 소통 능력으로 나타납니다."
@@ -207,10 +209,10 @@ ${resumeData
     parsedResponse.recommendations =
       parsedResponse.recommendations &&
       Array.isArray(parsedResponse.recommendations)
-        ? parsedResponse.recommendations.slice(0, 6)
+        ? parsedResponse.recommendations.slice(0, 5)
         : [];
 
-    console.log("추천 결과:", parsedResponse);
+    console.log(parsedResponse);
 
     return res.status(200).json(parsedResponse);
   } catch (err) {
