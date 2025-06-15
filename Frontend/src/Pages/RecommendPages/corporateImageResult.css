@@ -1,3 +1,29 @@
+/* 로딩중 표시 */
+.loading-text {
+  font-weight: bold;
+  color: #1e1e1e;
+  font-size: 20px;
+}
+
+.loading-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #444;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 3px solid #ccc;
+  border-top: 3px solid #008a34;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 10px;
+}
+
 /* 점수 페이지 (첫 번째 페이지) */
 /* 페이지 인덱스 */
 .image-recommend-result_wrapper {

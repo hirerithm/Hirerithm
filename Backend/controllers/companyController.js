@@ -7,7 +7,7 @@ exports.getCompanyKeywords = async (req, res) => {
     const keywords = await CompanyKeyword.find({
       company_name: new RegExp(`^${companyName}$`, "i"), // 대소문자 무시
     });
-    console.log(keywords);
+    //console.log(keywords);
 
     if (!keywords || keywords.length === 0) {
       return res

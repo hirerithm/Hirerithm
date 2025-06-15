@@ -26,7 +26,7 @@ const openai = new OpenAI({
 });
 
 // 추천 후보차 생성
-exports.recommendCandidate = async (req, res) => {
+exports.StrengthRecommendCandidate = async (req, res) => {
   try {
     const { required, preferred, etc } = req.body;
 
@@ -213,6 +213,85 @@ ${resumeData
     console.log("추천 결과:", parsedResponse);
 
     return res.status(200).json(parsedResponse);
+  } catch (err) {
+    console.error("후보자 추천 오류:", err.stack);
+    return res.status(500).json({ success: false, message: "서버 오류" });
+  }
+};
+
+exports.KeywordRecommendCandidate = async (req, res) => {
+  try {
+    const { companyName } = req.params;
+
+    const categoryMapping = {
+      Teamculture: "TeamCulture",
+      Evaluation: "Evaluation",
+      "Pay Level": "PayLevel",
+      "Vision & Direction": "VisionDirection",
+      "Welfare Quality": "Welfare",
+      Workload: "Workload",
+    };
+
+    // 해당 회사 키워드 점수 불러오기
+    const keywords = await CompanyKeyword.find({
+      company_name: new RegExp(`^${companyName}$`, "i"), // 대소문자 무시
+    });
+
+    if (!keywords || keywords.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "해당 회사의 키워드를 찾을 수 없습니다." });
+    }
+    // 점수 매핑
+    const scoreMap = {};
+    keywords.forEach((k) => {
+      const mappedKey = categoryMapping[k.category];
+      //console.log(mappedKey);
+      if (mappedKey && typeof k.score === "number") {
+        scoreMap[mappedKey] = k.score;
+      }
+    });
+
+    // 모든 CompanyTest 불러오고, 이력서 포함
+    const tests = await CompanyTest.find().populate("resume_id");
+
+    // 각 지원자에 대해 유사도 점수 계산
+    const result = tests.map((test) => {
+      const { resume_id, scores } = test;
+      //console.log(test);
+      let totalSimilarity = 0;
+      let count = 0;
+
+      Object.keys(scores).forEach((key) => {
+        const companyScore = scoreMap[key];
+        const applicantScore = scores[key];
+
+        if (
+          typeof companyScore === "number" &&
+          typeof applicantScore === "number" &&
+          isFinite(companyScore) &&
+          isFinite(applicantScore)
+        ) {
+          const similarity = 5 - Math.abs(companyScore - applicantScore);
+          totalSimilarity += similarity;
+          count++;
+        }
+      });
+
+      const averageScore =
+        count > 0 ? parseFloat((totalSimilarity / count).toFixed(2)) : 0;
+      return {
+        resume: resume_id,
+        compatibilityScore: averageScore.toFixed(2),
+      };
+    });
+
+    // 점수 내림차순 정렬
+    const result_top5 = result
+      .sort((a, b) => b.compatibilityScore - a.compatibilityScore)
+      .slice(0, 5);
+
+    res.json(result_top5);
   } catch (err) {
     console.error("후보자 추천 오류:", err.stack);
     return res.status(500).json({ success: false, message: "서버 오류" });
