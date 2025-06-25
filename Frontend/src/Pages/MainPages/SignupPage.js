@@ -3,6 +3,7 @@ import "./styles/SignupPage.css";
 import NotMemberNavigation from "../../Component/Navigation/NotMemberNavigation";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import FileLogo from "../../Image/Icon/FileLogo.svg";
 
 const terms = [
   {
@@ -210,6 +211,14 @@ function SignUpPage() {
   return (
     <div className="signup_wrapper">
       <NotMemberNavigation />
+      <header>
+        {/* 페이지 인덱스 */}
+        <div className="full-view-main-index-wrapper">
+          <img src={FileLogo} alt="-" />
+          <h2>회원가입</h2>
+        </div>
+      </header>
+
       <form className="signup_form" onSubmit={handleSignup}>
         <h2 className="signup_section-title">
           약관동의<span className="required">*</span>
