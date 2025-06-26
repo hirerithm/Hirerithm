@@ -1,11 +1,17 @@
 import React, { useState } from "react";
-import "./styles/SignupPage.css";
-import NotMemberNavigation from "../../Component/Navigation/NotMemberNavigation";
+import "./css/signup.css";
+import NotMemberNavigation from "../../components/NotMemberNavigation";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import FileLogo from "../../Image/Icon/FileLogo.svg";
+import FileLogo from "../../assets/icon/FileLogo.svg";
 
-const terms = [
+interface Term {
+  required: boolean;
+  title: string;
+  content: string;
+}
+
+const terms: Term[] = [
   {
     required: true,
     title: "서비스 이용약관 동의",
@@ -52,18 +58,38 @@ const terms = [
   },
 ];
 
-function SignUpPage() {
-  const [openIndex, setOpenIndex] = useState(null);
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+  phone1: string;
+  phone2: string;
+  phone3: string;
+  verify_code: string;
+  role: string;
+  company_name: string;
+}
+
+interface ErrorState {
+  email: string;
+  general: string;
+}
+
+function SignUp() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
   const navigate = useNavigate();
-  const [passwordTouched, setPasswordTouched] = useState(false);
-  const [checkedTerms, setCheckedTerms] = useState(
+  const [passwordTouched, setPasswordTouched] = useState<boolean>(false);
+  const [checkedTerms, setCheckedTerms] = useState<boolean[]>(
     new Array(terms.length).fill(false)
   );
-  const [errors, setErrors] = useState({
+
+  const [errors, setErrors] = useState<ErrorState>({
     email: "",
     general: "",
   });
-  const [formData, setFormData] = useState({
+
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     password: "",
@@ -78,16 +104,18 @@ function SignUpPage() {
 
   const BACK_URL = process.env.REACT_APP_BACKEND_ADDRESS;
 
-  const toggleTerm = (index) => {
+  const toggleTerm = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors((prev) => ({ ...prev, [e.target.name]: "", general: "" }));
   };
 
-  const handleSendVerificationCode = async () => {
+  const handleSendVerificationCode = async (): Promise<void> => {
     if (!formData.email) {
       setErrors((prev) => ({ ...prev, email: "이메일을 입력해주세요." }));
       return;
@@ -98,7 +126,7 @@ function SignUpPage() {
         params: { email: formData.email },
       });
       alert("인증번호가 이메일로 전송되었습니다.");
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("인증번호 전송 오류:", error);
       setErrors((prev) => ({
         ...prev,
@@ -107,18 +135,18 @@ function SignUpPage() {
     }
   };
 
-  const handleAllAgreeChange = (e) => {
+  const handleAllAgreeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;
     setCheckedTerms(new Array(terms.length).fill(isChecked));
   };
 
-  const handleTermChange = (index) => {
+  const handleTermChange = (index: number) => {
     const updated = [...checkedTerms];
     updated[index] = !updated[index];
     setCheckedTerms(updated);
   };
 
-  const handleCheckEmail = async () => {
+  const handleCheckEmail = async (): Promise<void> => {
     if (!formData.email) {
       setErrors((prev) => ({ ...prev, email: "이메일을 입력해주세요." }));
       return;
@@ -136,7 +164,7 @@ function SignUpPage() {
       } else {
         setErrors((prev) => ({ ...prev, email: "이미 가입된 이메일입니다." }));
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("이메일 중복 확인 오류:", error);
       setErrors((prev) => ({
         ...prev,
@@ -145,7 +173,7 @@ function SignUpPage() {
     }
   };
 
-  const handleSignup = async (e) => {
+  const handleSignup = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     const {
       name,
@@ -199,12 +227,19 @@ function SignUpPage() {
 
       alert("회원가입 성공!");
       navigate("/login");
-    } catch (err) {
-      setErrors((prev) => ({
-        ...prev,
-        general:
-          "회원가입 실패: " + (err.response?.data?.message || "서버 오류"),
-      }));
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setErrors((prev) => ({
+          ...prev,
+          general:
+            "회원가입 실패: " + (err.response?.data?.message || "서버 오류"),
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          general: "회원가입 실패: 알 수 없는 오류",
+        }));
+      }
     }
   };
 
@@ -420,4 +455,4 @@ function SignUpPage() {
   );
 }
 
-export default SignUpPage;
+export default SignUp;
