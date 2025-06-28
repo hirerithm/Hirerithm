@@ -14,7 +14,7 @@ const CompanyTest = require("../models/CompanyTest");
 
 const { decrypt } = require("../utils/encryption");
 
-const { OpenAI } = require("openai");
+const { OpenAI } = require("openai/index.mjs");
 
 // 환경변수 제대로 들어있는지 확인
 if (!process.env.OPENAI_API_KEY) {
