@@ -14,7 +14,7 @@ const CompanyKeyword = require("../models/CompanyKeyword");
 //const Wishlist = require("../models/Wishlist");
 //const { v4: uuidv4 } = require("uuid");
 
-const { OpenAI } = require("openai/index.mjs");
+const { OpenAI } = require("openai");
 
 // 환경변수 제대로 들어있는지 확인
 if (!process.env.OPENAI_API_KEY) {
