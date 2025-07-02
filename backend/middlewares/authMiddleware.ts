@@ -13,20 +13,20 @@ import Recruiter, { RecruiterDocument } from "../models/Recruiter";
 dotenv.config();
 
 // 토큰 페이로드 타입 정의
-interface JwtPayload {
+export interface JwtPayload {
   userEmail: string;
   iat?: number;
   exp?: number;
 }
 
 // Request 타입 확장
-interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
   user?: RecruiterDocument;
   decoded?: JwtPayload;
 }
 
 // JWT 인증 미들웨어
-const authMiddleware = async (
+export const authMiddleware = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
