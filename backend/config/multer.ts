@@ -1,5 +1,6 @@
-const multer = require("multer");
-const path = require("path");
+import multer, { FileFilterCallback } from "multer";
+import path from "path";
+import { Request } from "express";
 
 const uploadDir = path.join(__dirname, "../pdf");
 
@@ -9,28 +10,31 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname); // 확장자 추출
+    const ext = path.extname(file.originalname);
     const baseName = path
       .basename(file.originalname, ext)
-      .replace(/[^a-zA-Z0-9가-힣_]/g, ""); // 특수문자 제거
-    const fileName = `${Date.now()}-${baseName}${ext}`; // 날짜-파일명 형식으로 저장
+      .replace(/[^a-zA-Z0-9가-힣_]/g, "");
+    const fileName = `${Date.now()}-${baseName}${ext}`;
     cb(null, fileName);
   },
 });
 
 // 파일 필터링 (PDF만 허용)
-const fileFilter = (req, file, cb) => {
+const fileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: FileFilterCallback
+): void => {
   if (file.mimetype === "application/pdf") {
     cb(null, true);
   } else {
-    cb(new Error("PDF 파일만 업로드할 수 있습니다."), false);
+    cb(new Error("PDF 파일만 업로드할 수 있습니다."));
   }
 };
-
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB 제한(임시)
 });
 
-module.exports = upload;
+export default upload;
