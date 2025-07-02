@@ -1,10 +1,18 @@
-require("dotenv").config(); // 환경변수 로드
-const nodemailer = require("nodemailer");
-const User = require("../models/Recruiter");
-const VerificationCode = require("../models/verificationCode");
-const EmailVerificationCode = require("../models/emailVerificationCode");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import { Request, Response } from "express";
+import dotenv from "dotenv";
+import nodemailer from "nodemailer";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+import User from "../models/Recruiter";
+import VerificationCode from "../models/verificationCode";
+import EmailVerificationCode from "../models/emailVerificationCode";
+
+import { RecruiterDocument } from "../models/Recruiter";
+
+import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -14,8 +22,61 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// 사용자 정의 Request 타입
+interface RegisterRequest extends Request {
+  body: {
+    name: string;
+    email: string;
+    verify_code: string;
+    password: string;
+    phone: string;
+    role: "headhunter" | "company";
+    company_name: string;
+  };
+}
+
+interface PhoneRequest extends Request {
+  body: {
+    phone?: string;
+  };
+}
+
+interface EmailRequest extends Request {
+  query: {
+    email?: string;
+  };
+}
+
+interface VerifyCodeRequest extends Request {
+  body: {
+    email?: string;
+    verify_code?: string;
+  };
+}
+
+interface FindIdRequest extends Request {
+  body: {
+    name: string;
+    phone: string;
+  };
+}
+
+interface FindPasswordRequest extends Request {
+  body: {
+    email: string;
+    verify_code: string;
+  };
+}
+
+interface ResetPasswordRequest extends Request {
+  body: {
+    email: string;
+    new_password: string;
+  };
+}
+
 // 회원가입
-exports.register = async (req, res) => {
+export const register = async (req: RegisterRequest, res: Response) => {
   try {
     // 인증번호 없이 받도록 수정
     //const { name, email, password, phone, role, company_name } =
@@ -85,12 +146,14 @@ exports.register = async (req, res) => {
       success: true,
       message: "회원가입이 완료되었습니다.",
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("회원가입 오류:", error);
 
     // Mongoose validation 에러 처리
-    if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map((err) => err.message);
+    if (error instanceof Error && error.name === "ValidationError") {
+      const messages = Object.values((error as any).errors).map(
+        (err: any) => err.message
+      );
       return res.status(400).json({
         success: false,
         message: messages[0], // 여러 개일 경우 첫 번째만 보여줌
@@ -105,23 +168,26 @@ exports.register = async (req, res) => {
 };
 
 // 로그인
-exports.login = async (req, res) => {
+export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
   console.log("로그인 요청 도착:", req.body);
   try {
-    const user = await User.findOne({ email });
+    const user = (await User.findOne({ email })) as RecruiterDocument | null;
     console.log(user);
-
     if (!user) {
-      return res.status(400).json({ error: "등록되지 않은 사용자입니다." });
+      res.status(400).json({ error: "등록되지 않은 사용자입니다." });
+      return;
     }
-    if (!(await bcrypt.compare(password, user.password_hash))) {
-      return res.status(400).json({ error: "비밀번호가 잘못되었습니다." });
+
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
+      res.status(400).json({ error: "비밀번호가 잘못되었습니다." });
+      return;
     }
 
     const token = jwt.sign(
       { userEmail: user.email, userRole: user.role },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET as string,
       { expiresIn: "1h" }
     );
 
@@ -133,28 +199,37 @@ exports.login = async (req, res) => {
 };
 
 // 이메일 중복 체크
-exports.checkIdAvailability = async (req, res) => {
+export const checkIdAvailability = async (
+  req: RegisterRequest,
+  res: Response
+) => {
   console.log("중복 확인 요청:", req.body); // 로그 확인용
   const { email } = req.body;
   if (!email) {
-    return res.status(400).json({ message: "이메일을 입력해주세요." });
+    res.status(400).json({ message: "이메일을 입력해주세요." });
+    return;
   }
 
-  const existingUser = await User.findOne({ email });
+  const existingUser: RecruiterDocument | null = await User.findOne({ email });
   if (!existingUser) {
-    return res.status(200).json({ available: true });
+    res.status(200).json({ available: true });
+    return;
   }
 
   return res.status(200).json({ available: false });
 };
 
 // 인증번호 전송
-exports.sendVerifynumber = async (req, res) => {
+export const sendVerifynumber = async (
+  req: PhoneRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { phone } = req.body;
 
     if (!phone) {
-      return res.status(400).json({ message: "전화번호를 입력해주세요." });
+      res.status(400).json({ message: "전화번호를 입력해주세요." });
+      return;
     }
 
     const verifyCode = "123456"; // 임시 인증번호
@@ -168,20 +243,24 @@ exports.sendVerifynumber = async (req, res) => {
     });
     await newCode.save();
 
-    return res.status(200).json({ message: "인증번호가 전송되었습니다." });
+    res.status(200).json({ message: "인증번호가 전송되었습니다." });
   } catch (error) {
     console.error("인증번호 전송 오류:", error);
-    return res.status(500).json({ message: "서버 오류가 발생했습니다." });
+    res.status(500).json({ message: "서버 오류가 발생했습니다." });
   }
 };
 
 // 이메일 인증번호 전송
-exports.sendEmailVerifynumber = async (req, res) => {
+export const sendEmailVerifynumber = async (
+  req: EmailRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { email } = req.query;
 
     if (!email) {
-      return res.status(400).json({ message: "이메일을 입력해주세요." });
+      res.status(400).json({ message: "이메일을 입력해주세요." });
+      return;
     }
 
     const verifyCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6자리 랜덤
@@ -205,21 +284,27 @@ exports.sendEmailVerifynumber = async (req, res) => {
     await transporter.sendMail(mailOptions);
     console.log(`이메일 ${email}로 인증번호 ${verifyCode} 전송`);
 
-    return res.status(200).json({ message: "인증번호가 전송되었습니다." });
+    res.status(200).json({ message: "인증번호가 전송되었습니다." });
   } catch (error) {
     console.error("이메일 인증번호 전송 오류:", error);
-    return res.status(500).json({ message: "서버 오류가 발생했습니다." });
+    res.status(500).json({ message: "서버 오류가 발생했습니다." });
   }
 };
 
 // 이메일 인증번호 확인
-exports.checkVerifyCode = async (req, res) => {
+export const checkVerifyCode = async (
+  req: VerifyCodeRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { email, verify_code } = req.body;
+
     if (!email || !verify_code) {
-      return res
-        .status(400)
-        .json({ success: false, message: "모든 필드를 입력해주세요." });
+      res.status(400).json({
+        success: false,
+        message: "모든 필드를 입력해주세요.",
+      });
+      return;
     }
 
     const codeRecord = await EmailVerificationCode.findOne({
@@ -228,33 +313,38 @@ exports.checkVerifyCode = async (req, res) => {
     });
 
     if (!codeRecord) {
-      return res
-        .status(400)
-        .json({ success: false, message: "인증번호가 틀렸습니다." });
+      res.status(400).json({
+        success: false,
+        message: "인증번호가 틀렸습니다.",
+      });
+      return;
     }
 
     if (codeRecord.expires_at < new Date()) {
-      return res
-        .status(400)
-        .json({ success: false, message: "인증번호가 만료되었습니다." });
+      res.status(400).json({
+        success: false,
+        message: "인증번호가 만료되었습니다.",
+      });
+      return;
     }
 
     await EmailVerificationCode.deleteOne({ email });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "인증이 완료되었습니다.",
     });
   } catch (error) {
     console.error("인증 오류:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "서버 오류가 발생했습니다." });
+    res.status(500).json({
+      success: false,
+      message: "서버 오류가 발생했습니다.",
+    });
   }
 };
 
 // 아이디 찾기
-exports.findId = async (req, res) => {
+export const findId = async (req: FindIdRequest, res: Response) => {
   try {
     const { name, phone } = req.body;
     //console.log(name, phone);
@@ -282,7 +372,7 @@ exports.findId = async (req, res) => {
   }
 };
 // 비밀번호 찾기
-exports.findPassword = async (req, res) => {
+export const findPassword = async (req: FindPasswordRequest, res: Response) => {
   try {
     const { email, verify_code } = req.body;
 
@@ -320,7 +410,10 @@ exports.findPassword = async (req, res) => {
 };
 
 // 비밀번호 재설정
-exports.resetPassword = async (req, res) => {
+export const resetPassword = async (
+  req: ResetPasswordRequest,
+  res: Response
+) => {
   try {
     const { email, new_password } = req.body;
 
@@ -343,27 +436,34 @@ exports.resetPassword = async (req, res) => {
 };
 
 // 토큰 검증
-exports.verifyToken = (req, res) => {
+export const verifyToken = (req: AuthenticatedRequest, res: Response): void => {
   console.log("verifyToken 실행됨, req.decoded:", req.decoded);
   res.status(200).json({ success: true, user: req.decoded });
 };
 
-exports.getUser = async (req, res) => {
+// 사용자 정보 조회
+export const getUser = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-      return res.status(401).json({ message: "토큰이 없습니다." });
+      res.status(401).json({ message: "토큰이 없습니다." });
+      return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      userEmail: string;
+    };
     const user = await User.findOne({ email: decoded.userEmail }).select(
       "-password_hash"
     );
 
     if (!user) {
-      return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
+      res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
+      return;
     }
-
     res.status(200).json(user);
   } catch (err) {
     console.error("getUser 오류:", err);
@@ -372,31 +472,45 @@ exports.getUser = async (req, res) => {
 };
 
 // 사용자 정보 수정
-exports.updateUser = async (req, res) => {
+export const updateUser = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
   try {
+    if (!req.decoded) {
+      res.status(401).json({ message: "토큰이 없습니다." });
+      return;
+    }
     const userEmail = req.decoded.userEmail;
     const { name, phone, company_name } = req.body;
 
     const user = await User.findOne({ email: userEmail });
     if (!user) {
-      return res
+      res
         .status(404)
         .json({ success: false, message: "사용자를 찾을 수 없습니다." });
+      return;
     }
-
-    user.name = name || user.name;
-    user.phone = phone || user.phone;
-    user.company_name = company_name || user.company_name;
+    /*
+    || : 좌항이 falsy한 값이면 우항을 반환 (falsy: false, 0, "" (빈 문자열), null, undefined, NaN)
+    ?? : 좌항이 null 또는 undefined일 때만 우항을 반환
+    */
+    user.name = name ?? user.name;
+    user.phone = phone ?? user.phone;
+    user.company_name = company_name ?? user.company_name;
 
     await user.save();
 
-    return res
-      .status(200)
-      .json({ success: true, message: "회원 정보가 수정되었습니다.", user });
+    res.status(200).json({
+      success: true,
+      message: "회원 정보가 수정되었습니다.",
+      user,
+    });
   } catch (error) {
     console.error("회원 정보 수정 오류:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "서버 오류가 발생했습니다." });
+    res.status(500).json({
+      success: false,
+      message: "서버 오류가 발생했습니다.",
+    });
   }
 };

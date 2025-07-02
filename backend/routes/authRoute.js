@@ -6,8 +6,6 @@ const jwt = require("jsonwebtoken");
 const authController = require("../controllers/authController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
-const sendEmail = require("../utils/sendEmail"); // 맨 위에 import 추가
-
 // 회원가입 엔드포인트
 router.post("/signup", authController.register);
 

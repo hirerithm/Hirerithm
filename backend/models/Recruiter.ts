@@ -1,6 +1,20 @@
-const mongoose = require("mongoose");
+import mongoose, { Document, Schema, Model } from "mongoose";
 
-const recruiterSchema = new mongoose.Schema({
+export type RecruiterRole = "headhunter" | "company";
+
+// Recruiter 문서 타입
+export interface RecruiterDocument extends Document {
+  name: string;
+  email: string;
+  password_hash: string;
+  phone: string;
+  role: RecruiterRole;
+  company_name: string;
+  created_at: Date;
+}
+
+// 스키마 정의
+const recruiterSchema: Schema<RecruiterDocument> = new Schema({
   name: {
     type: String,
     required: true,
@@ -38,6 +52,10 @@ const recruiterSchema = new mongoose.Schema({
   },
 });
 
-const Recruiter = mongoose.model("Recruiter", recruiterSchema);
+// 모델 정의
+const Recruiter: Model<RecruiterDocument> = mongoose.model<RecruiterDocument>(
+  "Recruiter",
+  recruiterSchema
+);
 
-module.exports = Recruiter;
+export default Recruiter;
