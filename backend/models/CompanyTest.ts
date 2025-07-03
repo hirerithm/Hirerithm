@@ -2,6 +2,7 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 
 // scores 필드 내부 구조를 명확히 분리하여 타입 정의
 export interface CompanyTestScores {
+  [key: string]: number; // key로 접근 가능하도록
   TeamCulture: number;
   Evaluation: number;
   PayLevel: number;

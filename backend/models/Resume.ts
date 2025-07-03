@@ -5,7 +5,7 @@ export type Gender = "남성" | "여성";
 
 // Resume 문서 타입 정의
 export interface ResumeDocument extends Document {
-  resume_id: string;
+  resume_id: mongoose.Types.ObjectId;
   name: string;
   filePath: string;
   keyword: string[];
@@ -24,7 +24,7 @@ export interface ResumeDocument extends Document {
 const resumeSchema: Schema<ResumeDocument> = new Schema({
   // 고유 아이디
   resume_id: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required: true,
     unique: true,
   },
