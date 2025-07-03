@@ -1,20 +1,24 @@
-require("dotenv").config(); // 환경변수 가장 먼저 불러오기
+import dotenv from "dotenv";
+dotenv.config(); // 환경변수 가장 먼저 불러오기
 
-const puppeteer = require("puppeteer");
-const path = require("path");
-const Resume = require("../models/Resume");
-const Education = require("../models/Education");
-const Career = require("../models/Career");
-const Certificate = require("../models/Certificate");
-const Skills = require("../models/Skills");
-const OtherInfo = require("../models/OtherInfo");
-const CompanyTest = require("../models/CompanyTest");
+import mongoose from "mongoose";
+import puppeteer from "puppeteer";
+import path from "path";
+import { Request, Response } from "express";
+
+import Resume, { ResumeDocument } from "../models/Resume";
+import Education from "../models/Education";
+import Career from "../models/Career";
+import Certificate from "../models/Certificate";
+import Skills from "../models/Skills";
+import OtherInfo from "../models/OtherInfo";
+import CompanyTest from "../models/CompanyTest";
 //const Wishlist = require("../models/Wishlist");
 //const { v4: uuidv4 } = require("uuid");
 
-const { decrypt } = require("../utils/encryption");
+import { decrypt } from "../utils/encryption";
 
-const { OpenAI } = require("openai");
+import { OpenAI } from "openai";
 
 // 환경변수 제대로 들어있는지 확인
 if (!process.env.OPENAI_API_KEY) {
@@ -26,7 +30,26 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-exports.uploadResume = async (req, res) => {
+interface UploadResumeBody {
+  name: string;
+  birth_date: string;
+  gender: string;
+  address: string;
+  phone: string;
+  current_salary: string;
+  desired_salary: string;
+  education?: string;
+  career?: string;
+  certificates?: string;
+  skills?: string;
+  otherinfo?: string;
+  companyTest?: string;
+}
+
+export const uploadResume = async (
+  req: Request<{}, {}, UploadResumeBody>,
+  res: Response
+): Promise<Response> => {
   // 이력서 업로드 & db저장
   try {
     const {
@@ -79,7 +102,7 @@ exports.uploadResume = async (req, res) => {
       desired_salary,
       createdAt: new Date(),
     });
-    const resumeId = resume._id.toString();
+    const resumeId = resume._id as mongoose.Types.ObjectId;
 
     const filename = `Resume_${resumeId}.pdf`;
     const pdfPath = path.join(__dirname, "../pdf/resumes", filename);
@@ -194,7 +217,10 @@ exports.uploadResume = async (req, res) => {
   }
 };
 
-exports.keywordResume = async (req, res) => {
+export const keywordResume = async (
+  req: Request<{ resume_id: string }>,
+  res: Response
+): Promise<Response> => {
   const { resume_id } = req.params;
 
   try {
@@ -268,13 +294,15 @@ exports.keywordResume = async (req, res) => {
     const gptResponse = completion.choices[0].message.content;
 
     // 키워드 추출 (응답이 JSON 형식일 경우)
-    let extractedKeywords;
+    let extractedKeywords: string[] = [];
     try {
       extractedKeywords = JSON.parse(gptResponse);
     } catch (e) {
       // fallback: 대괄호 안에서 문자열들만 추출
       extractedKeywords =
-        gptResponse.match(/"([^"]+)"/g)?.map((s) => s.replace(/"/g, "")) || [];
+        gptResponse
+          .match(/"([^"]+)"/g)
+          ?.map((s: string) => s.replace(/"/g, "")) || [];
     }
 
     console.log(extractedKeywords);
@@ -293,20 +321,24 @@ exports.keywordResume = async (req, res) => {
   }
 };
 
-exports.downloadResume = async (req, res) => {
+export const downloadResume = async (
+  req: Request<{ filename: string }>,
+  res: Response
+): Promise<void> => {
   const filename = req.params.filename;
   const filePath = path.join(__dirname, "../pdf/resumes", filename);
   res.download(filePath, filename, (err) => {
     if (err) {
       console.error("다운로드 실패:", err);
-      return res
-        .status(500)
-        .json({ success: false, message: "서버 오류 발생" });
+      res.status(500).json({ success: false, message: "서버 오류 발생" });
     }
   });
 };
 
-exports.listResume = async (req, res) => {
+export const listResume = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const resumes = await Resume.find(
       {},
@@ -364,14 +396,22 @@ exports.listResume = async (req, res) => {
   }
 };
 
-exports.wishlistResume = async (req, res) => {
+interface WishlistParams {
+  email: string;
+  resume_id: string;
+}
+export const wishlistResume = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { email, resume_id } = req.params;
 
   try {
     const resume = await Resume.findOne({ resume_id });
 
     if (!resume) {
-      return res.status(404).json({ message: "이력서를 찾을 수 없습니다." });
+      res.status(404).json({ message: "이력서를 찾을 수 없습니다." });
+      return;
     }
 
     /*
@@ -403,7 +443,7 @@ exports.wishlistResume = async (req, res) => {
       // 한 번 더 누르면 위시리스트(찜)에서 제거하는 방식으로?
       resume.wishlist.splice(index, 1);
       await resume.save();
-      return res.status(200).json({ message: "찜 목록에서 제거되었습니다." });
+      res.status(200).json({ message: "찜 목록에서 제거되었습니다." });
     }
 
     resume.wishlist.push(email);
@@ -416,13 +456,17 @@ exports.wishlistResume = async (req, res) => {
   }
 };
 
-exports.viewwishlistResume = async (req, res) => {
+export const viewwishlistResume = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { email } = req.params;
   try {
     const wishlistedResumes = await Resume.find({ wishlist: email });
 
     if (!wishlistedResumes.length) {
-      return res.status(404).json({ message: "찜한 이력서가 없습니다." });
+      res.status(404).json({ message: "찜한 이력서가 없습니다." });
+      return;
     }
 
     res.status(200).json(wishlistedResumes);
@@ -432,14 +476,18 @@ exports.viewwishlistResume = async (req, res) => {
   }
 };
 
-exports.deletewishlistResume = async (req, res) => {
+export const deletewishlistResume = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { email, resume_id } = req.params;
 
   try {
     const resume = await Resume.findOne({ resume_id });
 
     if (!resume) {
-      return res.status(404).json({ message: "이력서를 찾을 수 없습니다." });
+      res.status(404).json({ message: "이력서를 찾을 수 없습니다." });
+      return;
     }
 
     const i = resume.wishlist.indexOf(email);
@@ -455,7 +503,10 @@ exports.deletewishlistResume = async (req, res) => {
   }
 };
 
-exports.sortPopularResume = async (req, res) => {
+export const sortPopularResume = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   // 인기순으로 이력서 정렬
   try {
     const sorted_resumes = await Resume.aggregate([
@@ -475,7 +526,10 @@ exports.sortPopularResume = async (req, res) => {
   }
 };
 
-exports.sortLatestResume = async (req, res) => {
+export const sortLatestResume = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const resumes = await Resume.find().sort({ createdAt: -1 });
     res.status(200).json(resumes);
@@ -485,11 +539,15 @@ exports.sortLatestResume = async (req, res) => {
   }
 };
 
-exports.detailResume = async (req, res) => {
+export const detailResume = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const resume_id = req.body.resume_id || req.query.resume_id;
 
   if (!resume_id) {
-    return res.status(404).json({ message: "이력서를 찾을 수 없습니다." });
+    res.status(404).json({ message: "이력서를 찾을 수 없습니다." });
+    return;
   }
 
   try {
@@ -512,7 +570,8 @@ exports.detailResume = async (req, res) => {
     );
 
     if (!resume) {
-      return res.status(404).json({ message: "?이력서를 찾을 수 없습니다." });
+      res.status(404).json({ message: "?이력서를 찾을 수 없습니다." });
+      return;
     }
 
     const [education, career, certificates, skills, otherInfo, companyTest] =
