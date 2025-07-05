@@ -49,7 +49,7 @@ interface UploadResumeBody {
 export const uploadResume = async (
   req: Request<{}, {}, UploadResumeBody>,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   // 이력서 업로드 & db저장
   try {
     const {
@@ -205,31 +205,34 @@ export const uploadResume = async (
       });
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: "이력서 업로드 및 저장 완료",
       resume_id: resumeId,
       filename: filename,
     });
+    return;
   } catch (err) {
     console.error("업로드 오류:", err);
-    return res.status(500).json({ success: false, message: "서버 오류 발생" });
+    res.status(500).json({ success: false, message: "서버 오류 발생" });
+    return;
   }
 };
 
 export const keywordResume = async (
   req: Request<{ resume_id: string }>,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   const { resume_id } = req.params;
 
   try {
     // 이력서 정보 조회
     const resume = await Resume.findOne({ resume_id });
     if (!resume) {
-      return res
+      res
         .status(404)
         .json({ success: false, message: "이력서를 찾을 수 없습니다." });
+      return;
     }
 
     // 연관 데이터 가져오기
@@ -311,13 +314,15 @@ export const keywordResume = async (
     resume.keyword = extractedKeywords;
     await resume.save();
 
-    return res.status(200).json({
+    res.status(200).json({
       resume_id: resume_id,
       keywords: extractedKeywords,
     });
+    return;
   } catch (err) {
     console.error("키워드 생성 오류:", err);
-    return res.status(500).json({ success: false, message: "서버 오류 발생" });
+    res.status(500).json({ success: false, message: "서버 오류 발생" });
+    return;
   }
 };
 

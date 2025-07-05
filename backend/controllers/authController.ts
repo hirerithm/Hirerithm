@@ -76,7 +76,10 @@ interface ResetPasswordRequest extends Request {
 }
 
 // 회원가입
-export const register = async (req: RegisterRequest, res: Response) => {
+export const register = async (
+  req: RegisterRequest,
+  res: Response
+): Promise<void> => {
   try {
     // 인증번호 없이 받도록 수정
     //const { name, email, password, phone, role, company_name } =
@@ -93,9 +96,10 @@ export const register = async (req: RegisterRequest, res: Response) => {
       !company_name ||
       !verify_code
     ) {
-      return res
+      res
         .status(400)
         .json({ success: false, message: "모든 필드를 입력해주세요." });
+      return;
     }
 
     // 인증번호 검증 제거
@@ -114,15 +118,17 @@ export const register = async (req: RegisterRequest, res: Response) => {
     });
 
     if (!codeRecord) {
-      return res
+      res
         .status(400)
         .json({ success: false, message: "인증번호가 틀렸습니다." });
+      return;
     }
 
     if (codeRecord.expires_at < new Date()) {
-      return res
+      res
         .status(400)
         .json({ success: false, message: "인증번호가 만료되었습니다." });
+      return;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -142,10 +148,11 @@ export const register = async (req: RegisterRequest, res: Response) => {
     //await VerificationCode.deleteOne({ phone });
     await EmailVerificationCode.deleteOne({ email });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "회원가입이 완료되었습니다.",
     });
+    return;
   } catch (error: unknown) {
     console.error("회원가입 오류:", error);
 
@@ -154,10 +161,11 @@ export const register = async (req: RegisterRequest, res: Response) => {
       const messages = Object.values((error as any).errors).map(
         (err: any) => err.message
       );
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: messages[0], // 여러 개일 경우 첫 번째만 보여줌
       });
+      return;
     }
 
     res.status(500).json({
@@ -202,7 +210,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const checkIdAvailability = async (
   req: RegisterRequest,
   res: Response
-) => {
+): Promise<void> => {
   console.log("중복 확인 요청:", req.body); // 로그 확인용
   const { email } = req.body;
   if (!email) {
@@ -216,7 +224,8 @@ export const checkIdAvailability = async (
     return;
   }
 
-  return res.status(200).json({ available: false });
+  res.status(200).json({ available: false });
+  return;
 };
 
 // 인증번호 전송
@@ -344,7 +353,10 @@ export const checkVerifyCode = async (
 };
 
 // 아이디 찾기
-export const findId = async (req: FindIdRequest, res: Response) => {
+export const findId = async (
+  req: FindIdRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { name, phone } = req.body;
     //console.log(name, phone);
@@ -360,9 +372,8 @@ export const findId = async (req: FindIdRequest, res: Response) => {
 
     const user = await User.findOne({ name, phone });
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: "일치하는 사용자를 찾을 수 없습니다." });
+      res.status(404).json({ message: "일치하는 사용자를 찾을 수 없습니다." });
+      return;
     }
 
     res.status(200).json({ email: user.email, created_at: user.created_at });
@@ -372,7 +383,10 @@ export const findId = async (req: FindIdRequest, res: Response) => {
   }
 };
 // 비밀번호 찾기
-export const findPassword = async (req: FindPasswordRequest, res: Response) => {
+export const findPassword = async (
+  req: FindPasswordRequest,
+  res: Response
+): Promise<void> => {
   try {
     const { email, verify_code } = req.body;
 
@@ -382,24 +396,25 @@ export const findPassword = async (req: FindPasswordRequest, res: Response) => {
       verify_code,
     });
     if (!validCode) {
-      return res
+      res
         .status(400)
         .json({ success: false, message: "인증번호가 올바르지 않습니다." });
+      return;
     }
 
     if (validCode.expires_at < new Date()) {
-      return res
+      res
         .status(400)
         .json({ success: false, message: "인증번호가 만료되었습니다." });
+      return;
     }
 
     await EmailVerificationCode.deleteOne({ email });
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: "일치하는 사용자를 찾을 수 없습니다." });
+      res.status(404).json({ message: "일치하는 사용자를 찾을 수 없습니다." });
+      return;
     }
 
     res.status(200).json({ message: "비밀번호 재설정 페이지로 이동.", email });
@@ -413,15 +428,16 @@ export const findPassword = async (req: FindPasswordRequest, res: Response) => {
 export const resetPassword = async (
   req: ResetPasswordRequest,
   res: Response
-) => {
+): Promise<void> => {
   try {
     const { email, new_password } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res
+      res
         .status(404)
         .json({ message: "해당 이메일의 사용자를 찾을 수 없습니다." });
+      return;
     }
 
     const hashedPassword = await bcrypt.hash(new_password, 10);

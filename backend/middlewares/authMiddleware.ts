@@ -30,22 +30,24 @@ export const authMiddleware = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-) => {
-  console.log("authMiddleware 실행됨");
+): Promise<void> => {
+  //console.log("authMiddleware 실행됨");
 
   const authHeader = req.headers.authorization;
   const token = authHeader?.split(" ")[1];
 
   if (!authHeader) {
-    return res
+    res
       .status(401)
       .json({ message: "헤더가 없습니다. 인증이 거부되었습니다." });
+    return;
   }
 
   if (!token) {
-    return res
+    res
       .status(401)
       .json({ message: "토큰이 없습니다. 인증이 거부되었습니다." });
+    return;
   }
 
   // JWT 토큰 검증
@@ -58,7 +60,8 @@ export const authMiddleware = async (
     const user = await Recruiter.findOne({ email: decoded.userEmail });
 
     if (!user) {
-      return res.status(401).json({ message: "사용자를 찾을 수 없습니다." });
+      res.status(401).json({ message: "사용자를 찾을 수 없습니다." });
+      return;
     }
 
     req.decoded = decoded;
