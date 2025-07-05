@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config(); // 환경변수 로드
 
-export const connect = async (): Promise<void> => {
+export const db = async (): Promise<void> => {
   try {
     const mongo_uri = process.env.MONGODB_URI;
     if (!mongo_uri) {
