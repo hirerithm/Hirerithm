@@ -1,0 +1,71 @@
+.career-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.career-card {
+  border: 2px solid #008a34;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #f9fff9;
+  position: relative;
+}
+
+.delete-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #ff3b30;
+}
+
+.delete-button:hover {
+  color: #c40000;
+}
+
+.add-button {
+  margin-top: 10px;
+  background-color: #008a34;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.add-button:hover {
+  background-color: #016b2a;
+}
+
+.resume-add-button {
+  border: none;
+  background-color: #008a34;
+  color: #ebf8f0;
+  border-radius: 10px;
+  padding: 0.5em 1.5rem;
+  font-weight: 500;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.resume-add-button:hover {
+  background-color: #016b2a;
+}
+
+.resume-item-container {
+  border: 1px solid #008a34;
+  border-radius: 8px;
+  background-color: #f9fff9;
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.career-box-wrapper {
+  border: 1px solid #008a34;
+
+}
