@@ -12,6 +12,8 @@ import TestResult from "../../Component/NonMemberComponent/TestResult";
 import CompanyTest from "../../Component/NonMemberComponent/CompanyTest";
 import { AnimatePresence, motion } from "framer-motion";
 
+
+
 const Resume = ({ resumeData, dispatch }) => {
   const [showCompanyTest, setShowCompanyTest] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
