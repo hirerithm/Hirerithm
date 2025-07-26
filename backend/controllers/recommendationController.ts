@@ -68,6 +68,11 @@ MongoDB filter 객체 형식(JSON)으로 출력해줘. 예: { "skill_name": { "$
 
     let queryFilter;
     const queryText = queryResponse.choices[0].message.content;
+    if (!queryText) {
+      console.error("GPT 응답 오류 : content가 null입니다.");
+      res.status(500).json({ success: false, message: "GPT 응답 오류: content가 null입니다." });
+      return;
+    }
     try {
       queryFilter = JSON.parse(queryText);
     } catch (e) {
@@ -204,6 +209,12 @@ ${resumeData
     });
 
     const gptResponse = completion.choices[0].message.content;
+    
+    if (!gptResponse) {
+      console.error("GPT 응답 오류 : content가 null입니다.");
+      res.status(500).json({ success: false, message: "GPT 응답 오류: content가 null입니다." });
+      return;
+    }
 
     let parsedResponse;
     try {
