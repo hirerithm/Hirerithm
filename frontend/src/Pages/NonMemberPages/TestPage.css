@@ -1,0 +1,142 @@
+.selfintro_wrapper {
+  margin-top: 130px;
+  margin-bottom: 50px;
+}
+
+/* 헤더 */
+.selfintro_wrapper header {
+  width: 100%;
+}
+
+.selfintro_wrapper header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1e1e1e;
+  text-align: center;
+  margin-top: 30px;
+}
+
+/* 메인 */
+.selfintro_wrapper main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+/* 입력창 */
+.selfintro_form-wrapper {
+  position: relative;
+  width: calc(100% - 300px);
+  margin-bottom: 50px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.selfintro_form-wrapper li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.selfintro_form-wrapper li label {
+  font-weight: 500;
+  font-size: 18px;
+  color: #1e1e1e;
+}
+
+.selfintro_form-wrapper li input,
+.selfintro_form-wrapper li textarea {
+  border: 2px solid #008a34;
+  padding: 12px 15px;
+  border-radius: 10px;
+  font-size: 16px;
+  width: 100%;
+  color: #1e1e1e;
+  background-color: transparent;
+}
+
+.selfintro_form-wrapper li textarea {
+  height: 25vh;
+  min-height: 120px;
+  resize: none;
+}
+
+.selfintro_form-wrapper li input:focus,
+.selfintro_form-wrapper li textarea:focus {
+  border: 2px solid #008a34 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.selfintro_form-wrapper li input::placeholder,
+.selfintro_form-wrapper li textarea::placeholder {
+  font-size: 15px;
+  color: #1e1e1e70;
+}
+
+.char-counter {
+  font-size: 14px;
+  color: #555;
+  margin-top: 4px;
+  text-align: right;
+  width: 100%;
+}
+
+/* 버튼 그룹 */
+.selfintro_button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.temp-save-btn,
+.analyze-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.temp-save-btn {
+  background-color: #ccc;
+  color: #1e1e1e;
+}
+
+.temp-save-btn:hover {
+  background-color: #b5b5b5;
+}
+
+.analyze-btn {
+  background-color: #008a34;
+  color: #f2fff7;
+}
+
+.analyze-btn:hover {
+  background-color: #016b2a;
+}
+
+/* 로딩 스피너 */
+.spinner {
+  border: 2px solid #f2fff7;
+  border-top: 2px solid #008a34;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
