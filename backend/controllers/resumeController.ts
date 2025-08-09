@@ -296,6 +296,13 @@ export const keywordResume = async (
 
     const gptResponse = completion.choices[0].message.content;
 
+    if (!gptResponse) {
+      res
+        .status(500)
+        .json({ success: false, message: "GPT 응답이 비어있습니다." });
+      return;
+    }
+
     // 키워드 추출 (응답이 JSON 형식일 경우)
     let extractedKeywords: string[] = [];
     try {
