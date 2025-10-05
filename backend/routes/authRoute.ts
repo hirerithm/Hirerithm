@@ -1,12 +1,12 @@
-const express = require("express");
-const router = express.Router();
-const bcrypt = require("bcryptjs");
-const User = require("../models/Recruiter");
-const jwt = require("jsonwebtoken");
-const authController = require("../controllers/authController");
-const authMiddleware = require("../middlewares/authMiddleware");
+import express, { Request, Response } from "express";
 
-const sendEmail = require("../utils/sendEmail"); // 맨 위에 import 추가
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../models/Recruiter";
+import * as authController from "../controllers/authController";
+import authMiddleware from "../middlewares/authMiddleware";
+
+const router = express.Router();
 
 // 회원가입 엔드포인트
 router.post("/signup", authController.register);
@@ -36,21 +36,27 @@ router.post("/reset-password", authController.resetPassword);
 // 토큰 검증
 router.get("/verify", authMiddleware, authController.verifyToken);
 
-router.post("/get-user", authMiddleware, async (req, res) => {
-  try {
-    const userEmail = req.body.email;
-    const user = await User.findOne({ email: userEmail });
-    if (!user) {
-      return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
-    }
+router.post(
+  "/get-user",
+  authMiddleware,
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userEmail = req.body.email;
+      const user = await User.findOne({ email: userEmail });
 
-    res.status(200).json({ user });
-  } catch (error) {
-    console.error("사용자 정보 조회 오류:", error);
-    res.status(500).json({ message: "서버 오류" });
+      if (!user) {
+        res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
+        return;
+      }
+
+      res.status(200).json({ user });
+    } catch (error) {
+      console.error("사용자 정보 조회 오류:", error);
+      res.status(500).json({ message: "서버 오류" });
+    }
   }
-});
+);
 
 router.put("/update-user", authMiddleware, authController.updateUser);
 
-module.exports = router;
+export default router;

@@ -1,6 +1,13 @@
-const CompanyKeyword = require("../models/CompanyKeyword");
+import { Request, Response } from "express";
+import CompanyKeyword, {
+  CompanyKeywordDocument,
+} from "../models/CompanyKeyword";
 
-exports.getCompanyKeywords = async (req, res) => {
+// 기업 키워드 조회
+export const getCompanyKeywords = async (
+  req: Request<{ companyName: string }>,
+  res: Response
+): Promise<void> => {
   try {
     const { companyName } = req.params;
 
@@ -10,11 +17,11 @@ exports.getCompanyKeywords = async (req, res) => {
     //console.log(keywords);
 
     if (!keywords || keywords.length === 0) {
-      return res
+      res
         .status(404)
         .json({ message: "해당 회사의 키워드를 찾을 수 없습니다." });
+      return;
     }
-
     // const keywordData = {};
     const keywordArray = keywords.map((item) => ({
       category: item.category,
@@ -31,7 +38,11 @@ exports.getCompanyKeywords = async (req, res) => {
   }
 };
 
-exports.getCompanyAutoSearch = async (req, res) => {
+// 기업 자동완성 검색
+export const getCompanyAutoSearch = async (
+  req: Request<{}, {}, {}, { prefix?: string }>,
+  res: Response
+): Promise<void> => {
   try {
     const prefix = req.query.prefix;
 

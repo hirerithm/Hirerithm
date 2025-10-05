@@ -1,22 +1,28 @@
-require("dotenv").config(); // 환경변수 가장 먼저 불러오기
+import dotenv from "dotenv";
 
-const puppeteer = require("puppeteer");
-const path = require("path");
-const Resume = require("../models/Resume");
-const Education = require("../models/Education");
-const Career = require("../models/Career");
-const Certificate = require("../models/Certificate");
-const Skills = require("../models/Skills");
-const OtherInfo = require("../models/OtherInfo");
+dotenv.config(); // 환경변수 가장 먼저 불러오기
 
-const CompanyTest = require("../models/CompanyTest");
-const CompanyKeyword = require("../models/CompanyKeyword");
+import puppeteer from "puppeteer";
+import { Request, Response } from "express";
+import path from "node:path";
+import Resume, { ResumeDocument } from "../models/Resume";
+import Education, { EducationDocument } from "../models/Education";
+import Career, { CareerDocument } from "../models/Career";
+import Certificate, { CertificateDocument } from "../models/Certificate";
+import Skills, { SkillDocument } from "../models/Skills";
+import OtherInfo, { OtherInfoDocument } from "../models/OtherInfo";
+
+import CompanyTest, { CompanyTestDocument } from "../models/CompanyTest";
+import CompanyKeyword, {
+  CompanyKeywordDocument,
+} from "../models/CompanyKeyword";
 //const Wishlist = require("../models/Wishlist");
 //const { v4: uuidv4 } = require("uuid");
 
-const { OpenAI } = require("openai");
+import OpenAI from "openai";
 
 // 환경변수 제대로 들어있는지 확인
+
 if (!process.env.OPENAI_API_KEY) {
   console.error("❌ OPENAI_API_KEY가 .env에서 로드되지 않았습니다!");
   process.exit(1);
@@ -26,7 +32,10 @@ const openai = new OpenAI({
 });
 
 // 추천 후보차 생성
-exports.StrengthRecommendCandidate = async (req, res) => {
+export const StrengthRecommendCandidate = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { required, preferred, etc } = req.body;
 
@@ -59,13 +68,17 @@ MongoDB filter 객체 형식(JSON)으로 출력해줘. 예: { "skill_name": { "$
 
     let queryFilter;
     const queryText = queryResponse.choices[0].message.content;
+    if (!queryText) {
+      console.error("GPT 응답 오류 : content가 null입니다.");
+      res.status(500).json({ success: false, message: "GPT 응답 오류: content가 null입니다." });
+      return;
+    }
     try {
       queryFilter = JSON.parse(queryText);
     } catch (e) {
       console.error("GPT 응답 JSON 파싱 실패 (필터):", queryText);
-      return res
-        .status(500)
-        .json({ success: false, message: "GPT 필터 응답 오류" });
+      res.status(500).json({ success: false, message: "GPT 필터 응답 오류" });
+      return;
     }
 
     console.log("GPT 기반 필터 조건:", queryFilter);
@@ -83,7 +96,9 @@ MongoDB filter 객체 형식(JSON)으로 출력해줘. 예: { "skill_name": { "$
       resumes.map(async (resume) => {
         const skills = await Skills.find({ resume_id: resume.resume_id });
         const education = await Education.find({ resume_id: resume.resume_id });
-        const career = await Career.find({ resume_id: resume.resume_id });
+        const career = (await Career.find({
+          resume_id: resume.resume_id,
+        })) as CareerDocument[];
 
         return {
           resume_id: resume.resume_id,
@@ -91,10 +106,10 @@ MongoDB filter 객체 형식(JSON)으로 출력해줘. 예: { "skill_name": { "$
           keyword: resume.keyword || [],
           skills: skills.map((s) => s.skill_name), // skill_name만 추출
           career: career.map((c) => ({
-            company: c.company,
+            company: c.company_name,
             position: c.position,
-            startDate: c.start_date,
-            endDate: c.end_date,
+            startDate: c.start_year,
+            endDate: c.end_year,
             description: c.description,
           })),
         };
@@ -194,15 +209,20 @@ ${resumeData
     });
 
     const gptResponse = completion.choices[0].message.content;
+    
+    if (!gptResponse) {
+      console.error("GPT 응답 오류 : content가 null입니다.");
+      res.status(500).json({ success: false, message: "GPT 응답 오류: content가 null입니다." });
+      return;
+    }
 
     let parsedResponse;
     try {
       parsedResponse = JSON.parse(gptResponse);
     } catch (e) {
       console.error("GPT 응답 JSON 파싱 실패:", gptResponse);
-      return res
-        .status(500)
-        .json({ success: false, message: "GPT 추천 응답 오류" });
+      res.status(500).json({ success: false, message: "GPT 추천 응답 오류" });
+      return;
     }
 
     // 최대 6명까지만 응답
@@ -214,14 +234,26 @@ ${resumeData
 
     console.log(parsedResponse);
 
-    return res.status(200).json(parsedResponse);
+    res.status(200).json(parsedResponse);
+    return;
   } catch (err) {
-    console.error("후보자 추천 오류:", err.stack);
-    return res.status(500).json({ success: false, message: "서버 오류" });
+    console.error("후보자 추천 오류:", (err as Error).stack);
+    res.status(500).json({ success: false, message: "서버 오류" });
   }
 };
 
-exports.KeywordRecommendCandidate = async (req, res) => {
+interface CategoryScoreMap {
+  [key: string]: number;
+}
+
+interface TestScore {
+  [key: string]: number;
+}
+
+export const KeywordRecommendCandidate = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { companyName } = req.params;
 
@@ -240,12 +272,13 @@ exports.KeywordRecommendCandidate = async (req, res) => {
     });
 
     if (!keywords || keywords.length === 0) {
-      return res
+      res
         .status(404)
         .json({ message: "해당 회사의 키워드를 찾을 수 없습니다." });
+      return;
     }
     // 점수 매핑
-    const scoreMap = {};
+    const scoreMap: CategoryScoreMap = {};
     keywords.forEach((k) => {
       const mappedKey = categoryMapping[k.category];
       //console.log(mappedKey);
@@ -255,10 +288,12 @@ exports.KeywordRecommendCandidate = async (req, res) => {
     });
 
     // 모든 CompanyTest 불러오고, 이력서 포함
-    const tests = await CompanyTest.find().populate("resume_id");
+    const tests = await CompanyTest.find().populate("resume_id").exec();
+    const typedTests = tests as unknown as (Document &
+      CompanyTestDocument & { resume_id: ResumeDocument })[];
 
     // 각 지원자에 대해 유사도 점수 계산
-    const result = tests.map((test) => {
+    const result = typedTests.map((test) => {
       const { resume_id, scores } = test;
       //console.log(test);
       let totalSimilarity = 0;
@@ -280,22 +315,23 @@ exports.KeywordRecommendCandidate = async (req, res) => {
         }
       });
 
-      const averageScore =
-        count > 0 ? parseFloat((totalSimilarity / count).toFixed(2)) : 0;
+      const averageScore = count > 0 ? totalSimilarity / count : 0;
       return {
         resume: resume_id,
-        compatibilityScore: averageScore.toFixed(2),
+        compatibilityScore: parseFloat(averageScore.toFixed(2)), // 숫자로 유지
       };
     });
 
     // 점수 내림차순 정렬
     const result_top5 = result
-      .sort((a, b) => b.compatibilityScore - a.compatibilityScore)
+      .sort(
+        (a, b) => Number(b.compatibilityScore) - Number(a.compatibilityScore)
+      )
       .slice(0, 5);
 
     res.json(result_top5);
   } catch (err) {
-    console.error("후보자 추천 오류:", err.stack);
-    return res.status(500).json({ success: false, message: "서버 오류" });
+    console.error("후보자 추천 오류:", (err as Error).stack);
+    res.status(500).json({ success: false, message: "서버 오류" });
   }
 };
