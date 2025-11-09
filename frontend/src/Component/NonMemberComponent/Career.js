@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ResumePlusIcon from "../../Image/Icon/ResumePlusIcon.svg";
+import DeleteIcon from "../../Image/Icon/DeleteIcon.svg";
 import "./resumeComponent.css";
 
 const Career = ({ initialData = [], onChange }) => {
@@ -35,14 +36,17 @@ const Career = ({ initialData = [], onChange }) => {
   return (
     <div className="resume-item">
       {careerList.map((career, index) => (
-        <div className="resume-item-container career-box" key={index}style={{ position: "relative" }}>
-          
+        <div
+          className="resume-item-container career-box"
+          key={index}
+          style={{ position: "relative" }}
+        >
           <button
             type="button"
             className="delete-button-top"
             onClick={() => removeCareer(index)}
           >
-            ❌
+            <img src={DeleteIcon} alt="삭제" />
           </button>
 
           <div className="resume-form-item">
@@ -50,9 +54,7 @@ const Career = ({ initialData = [], onChange }) => {
             <input
               type="text"
               value={career.position}
-              onChange={(e) =>
-                handleChange(index, "position", e.target.value)
-              }
+              onChange={(e) => handleChange(index, "position", e.target.value)}
               placeholder="직무명을 입력하세요"
             />
           </div>
@@ -74,9 +76,7 @@ const Career = ({ initialData = [], onChange }) => {
             <input
               type="text"
               value={career.end_date}
-              onChange={(e) =>
-                handleChange(index, "end_date", e.target.value)
-              }
+              onChange={(e) => handleChange(index, "end_date", e.target.value)}
               placeholder="예: 2022-12"
             />
           </div>
