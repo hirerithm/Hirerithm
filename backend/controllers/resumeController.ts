@@ -297,6 +297,17 @@ export const keywordResume = async (
     const gptResponse = completion.choices[0].message.content;
 
     if (!gptResponse) {
+      console.error("GPT 응답 오류 : content가 null입니다.");
+      res
+        .status(500)
+        .json({
+          success: false,
+          message: "GPT 응답 오류: content가 null입니다.",
+        });
+      return;
+    }
+
+    if (!gptResponse) {
       res
         .status(500)
         .json({ success: false, message: "GPT 응답이 비어있습니다." });

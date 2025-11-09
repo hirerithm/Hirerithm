@@ -39,12 +39,25 @@ const License = ({ initialData = [], onChange }) => {
     );
 
     onChange(filtered);
-  }, [license]);
+  }, [license, onChange]);
 
   return (
     <div className="resume-item">
       {license.map((item, index) => (
-        <div className="resume-item-container" key={index}>
+        <div
+          className="resume-item-container career-box"
+          key={index}
+          style={{ position: "relative" }}
+        >
+          {/* X 버튼 추가 */}
+          <button
+            type="button"
+            className="delete-button-top"
+            onClick={() => removeLicense(index)}
+          >
+            <img src={DeleteIcon} alt="삭제" />
+          </button>
+
           <div className="resume-form-item">
             <label>취득일</label>
             <input

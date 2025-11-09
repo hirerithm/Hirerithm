@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ResumePlusIcon from "../../Image/Icon/ResumePlusIcon.svg";
+import DeleteIcon from "../../Image/Icon/DeleteIcon.svg";
 import "./resumeComponent.css";
 
 const Education = ({ initialData = [], onChange }) => {
@@ -37,6 +38,13 @@ const Education = ({ initialData = [], onChange }) => {
     <div className="resume-item">
       {educations.map((edu, index) => (
         <div className="resume-item-container" key={index}>
+          <button
+            type="button"
+            className="delete-button-top"
+            onClick={() => removeEducation(index)}
+          >
+            <img src={DeleteIcon} alt="삭제" />
+          </button>
           <div className="resume-form-edu">
             <label>학력사항</label>
             <select

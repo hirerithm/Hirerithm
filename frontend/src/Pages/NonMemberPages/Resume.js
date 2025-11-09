@@ -53,20 +53,13 @@ const Resume = ({ resumeData, dispatch }) => {
       gender,
       address,
       phone,
+      work_experience,
       current_salary,
       desired_salary,
     } = personalData;
 
     // 필수 항목 검증
-    if (
-      !name ||
-      !birth_date ||
-      !gender ||
-      !address ||
-      !phone ||
-      !current_salary ||
-      !desired_salary
-    ) {
+    if (!name || !birth_date || !gender || !address || !phone) {
       alert("인적사항의 모든 필수 항목을 입력해주세요.");
       return;
     }
@@ -83,6 +76,7 @@ const Resume = ({ resumeData, dispatch }) => {
       gender,
       address,
       phone,
+      work_experience,
       current_salary,
       desired_salary,
       education: JSON.stringify(education),
