@@ -13,6 +13,15 @@ strong {
 }
 
 .resume-item-container {
+  border: 1px solid #008a34;
+  border-radius: 8px;
+  background-color: #f9fff9;
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.resume-item-container {
   display: flex;
   flex-direction: column;
   align-items: center;
