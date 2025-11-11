@@ -15,6 +15,9 @@ import FullViewMainPage from "./Pages/FullViewPages/FullViewMainPage";
 import MyPage from "./Pages/MainPages/MyPage";
 import HeadhunterMain from "./Pages/MainPages/HeadhunterMain";
 
+import TestPage from "./Pages/NonMemberPages/TestPage";
+import TestResultPage from "./Pages/NonMemberPages/TestResultPage";
+
 import "./App.css";
 import react from "react";
 
@@ -63,6 +66,10 @@ function App() {
 
         {/* 마이페이지지 */}
         <Route path="/MyPage" element={<MyPage />} />
+
+        {/* AI 의존도 검사 페이지 */}
+        <Route path="/test" element={<TestPage />} />
+        <Route path="/test_result" element={<TestResultPage />} />
       </Routes>
     </Router>
   );

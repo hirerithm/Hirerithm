@@ -61,6 +61,19 @@ const ResumePersonalData = ({ initialData, onChange }) => {
     setIsOpen(false);
   };
 
+  // 생년월일 자동 포맷
+  const handleBirthChange = (e) => {
+    let value = e.target.value.replace(/[^0-9]/g, ""); // 숫자만
+    // YYYY-MM-DD 자동 하이픈 삽입
+    if (value.length > 4 && value.length <= 6) {
+      value = value.slice(0, 4) + "-" + value.slice(4);
+    } else if (value.length > 6) {
+      value = value.slice(0, 4) + "-" + value.slice(4, 6) + "-" + value.slice(6, 8);
+    }
+    setDate(value);
+};
+
+
   const parseSalary = (formattedValue) => {
     return formattedValue.replace(/[^0-9]/g, "");
   };
@@ -86,11 +99,13 @@ const ResumePersonalData = ({ initialData, onChange }) => {
           </label>
           <input
             type="text"
-            placeholder="8자리 생년월일 입력"
+            placeholder="8자리 생년월일 입력 (YYYY-MM-DD)"
             className="birth-input"
             value={birth_date}
-            onChange={(e) => setDate(e.target.value)}
-            maxLength={8}
+            //onChange={(e) => setDate(e.target.value)}
+            //maxLength={8}
+            onChange={handleBirthChange}
+            maxLength={10}
           />
         </div>
 

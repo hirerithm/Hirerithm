@@ -8,6 +8,7 @@ export interface ResumeDocument extends Document {
   resume_id: mongoose.Types.ObjectId;
   name: string;
   filePath: string;
+  total_experience: number;
   keyword: string[];
   birth_date: Date;
   age?: number;
@@ -40,6 +41,10 @@ const resumeSchema: Schema<ResumeDocument> = new Schema({
   keyword: {
     type: [String],
     default: [],
+  },
+  total_experience: {
+    default: 0,
+    type: Number,
   },
   birth_date: {
     type: Date,

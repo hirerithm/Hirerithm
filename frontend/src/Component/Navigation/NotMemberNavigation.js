@@ -93,6 +93,9 @@ const Navigation = () => {
               >
                 이력서 등록
               </div>
+              <div className="dropdown-item" onClick={() => navigate("/test")}>
+                AI 의존도 검사
+              </div>
             </div>
           )}
         </div>

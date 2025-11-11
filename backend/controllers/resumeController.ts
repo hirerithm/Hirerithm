@@ -111,7 +111,7 @@ export const uploadResume = async (
     resume.resume_id = resumeId;
     resume.filePath = pdfPath;
 
-    await resume.save();
+    // await resume.save();
 
     // 여기부터 stringified 배열로 보내주세요
 
@@ -132,6 +132,8 @@ export const uploadResume = async (
     }
 
     // 경력 저장
+    let totalMonths = 0;
+
     if (career) {
       const careerArray = JSON.parse(career);
       for (const job of careerArray) {
@@ -145,8 +147,26 @@ export const uploadResume = async (
           isCurrent: job.isCurrent,
           end_year: job.isCurrent ? "" : job.end_year,
         });
+
+        // 경력 계산
+        const start = new Date(
+          parseInt(job.start_year.slice(0, 4), 10),
+          parseInt(job.start_year.slice(4, 6), 10) - 1
+        );
+        const end = job.isCurrent
+          ? new Date()
+          : new Date(
+              parseInt(job.end_year.slice(0, 4), 10),
+              parseInt(job.end_year.slice(4, 6), 10) - 1
+            );
+        const months =
+          (end.getFullYear() - start.getFullYear()) * 12 +
+          (end.getMonth() - start.getMonth());
+        totalMonths += months;
       }
     }
+
+    resume.total_experience = parseFloat((totalMonths / 12).toFixed(1));
 
     // 자격증 저장
     if (certificates) {
@@ -204,6 +224,8 @@ export const uploadResume = async (
         },
       });
     }
+
+    await resume.save();
 
     res.status(200).json({
       success: true,
@@ -307,6 +329,13 @@ export const keywordResume = async (
       return;
     }
 
+    if (!gptResponse) {
+      res
+        .status(500)
+        .json({ success: false, message: "GPT 응답이 비어있습니다." });
+      return;
+    }
+
     // 키워드 추출 (응답이 JSON 형식일 경우)
     let extractedKeywords: string[] = [];
     try {
@@ -367,6 +396,7 @@ export const listResume = async (
         phone: 1,
         current_salary: 1,
         desired_salary: 1,
+        total_experience: 1,
         keyword: 1,
         filePath: 1,
         createdAt: 1,
@@ -578,6 +608,7 @@ export const detailResume = async (
         phone: 1,
         current_salary: 1,
         desired_salary: 1,
+        total_experience: 1,
         keyword: 1,
         filePath: 1,
         createdAt: 1,

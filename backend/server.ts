@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoute";
 import companyRoutes from "./routes/companyRoute";
 import resumeRoutes from "./routes/resumeRoute";
 import recommendationRoutes from "./routes/recommendationRoute";
+import selfintroRoutes from "./routes/selfintroRoute";
 import { db } from "./config/db"; // DB 연결 모듈 불러오기
 
 const app = express();
@@ -25,6 +26,7 @@ app.use("/auth", authRoutes);
 app.use("/company", companyRoutes);
 app.use("/resume", resumeRoutes);
 app.use("/recommendation", recommendationRoutes);
+app.use("/selfintro", selfintroRoutes);
 
 // 에러 핸들링 미들웨어
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
