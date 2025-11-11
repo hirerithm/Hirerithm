@@ -1,0 +1,48 @@
+[
+  {
+    "category_name": "Teamculture",
+    "count": 74,
+    "average_score": 3.5,
+    "comment1": "사내문화 자유로움",
+    "comment2": "다양한 분야의 전문가가 모여 있어서 일을 배우기 좋고 전문성만 갖추고 있으면 자유롭게 일 중심으로 업무를 할 수 가 있음.",
+    "comments": [
+      "사내문화 자유로움",
+      "다양한 분야의 전문가가 모여 있어서 일을 배우기 좋고 전문성만 갖추고 있으면 자유롭게 일 중심으로 업무를 할 수 가 있음."
+    ]
+  },
+  {
+    "category_name": "Evaluation",
+    "count": 19,
+    "average_score": 2.5,
+    "comments": []
+  },
+  {
+    "category_name": "Pay Level",
+    "count": 16,
+    "average_score": 2.4,
+    "comments": []
+  },
+  {
+    "category_name": "Vision & Direction",
+    "count": 67,
+    "average_score": 2.1,
+    "comments": []
+  },
+  {
+    "category_name": "Welfare Quality",
+    "count": 64,
+    "average_score": 3.5,
+    "comments": []
+  },
+  {
+    "category_name": "Workload",
+    "count": 76,
+    "average_score": 3.7,
+    "comment1": "사태가 일어나기 전까진 워라벨은 좋았습니다",
+    "comment2": "워라벨이 좋았다",
+    "comments": [
+      "사태가 일어나기 전까진 워라벨은 좋았습니다",
+      "워라벨이 좋았다"
+    ]
+  }
+]

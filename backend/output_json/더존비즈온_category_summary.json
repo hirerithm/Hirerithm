@@ -1,0 +1,48 @@
+[
+  {
+    "category_name": "Teamculture",
+    "count": 74,
+    "average_score": 3.2,
+    "comment1": "무난무난하며 주위에 모난 사람이 없고 힘든 업무도 많겠지만 왠맘하면 가능한 업무를 줌",
+    "comment2": "개발자로서 역량 키우기 괜찮았다고 생각",
+    "comments": [
+      "무난무난하며 주위에 모난 사람이 없고 힘든 업무도 많겠지만 왠맘하면 가능한 업무를 줌",
+      "개발자로서 역량 키우기 괜찮았다고 생각"
+    ]
+  },
+  {
+    "category_name": "Evaluation",
+    "count": 19,
+    "average_score": 2.6,
+    "comments": []
+  },
+  {
+    "category_name": "Pay Level",
+    "count": 16,
+    "average_score": 2.7,
+    "comments": []
+  },
+  {
+    "category_name": "Vision & Direction",
+    "count": 67,
+    "average_score": 1.8,
+    "comments": []
+  },
+  {
+    "category_name": "Welfare Quality",
+    "count": 64,
+    "average_score": 3.7,
+    "comment1": "밥 삼시세끼",
+    "comment2": "밥이 잘 나오고 본사 캠퍼스는 멀지만 좋고 통큰버스 출/퇴근이 가능함",
+    "comments": [
+      "밥 삼시세끼",
+      "밥이 잘 나오고 본사 캠퍼스는 멀지만 좋고 통큰버스 출/퇴근이 가능함"
+    ]
+  },
+  {
+    "category_name": "Workload",
+    "count": 76,
+    "average_score": 2.5,
+    "comments": []
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "category_name": "Teamculture",
+    "count": 74,
+    "average_score": 3.6,
+    "comment1": "나름대로 능력 있는 임원이 있고, 좋은 사람들이 있음.",
+    "comment2": " 사회생활 방법등 배우기좋고 사람들도친절해용",
+    "comments": [
+      "나름대로 능력 있는 임원이 있고, 좋은 사람들이 있음.",
+      " 사회생활 방법등 배우기좋고 사람들도친절해용"
+    ]
+  },
+  {
+    "category_name": "Evaluation",
+    "count": 19,
+    "average_score": 2.5,
+    "comments": []
+  },
+  {
+    "category_name": "Pay Level",
+    "count": 16,
+    "average_score": 3.3,
+    "comments": []
+  },
+  {
+    "category_name": "Vision & Direction",
+    "count": 67,
+    "average_score": 2.5,
+    "comments": []
+  },
+  {
+    "category_name": "Welfare Quality",
+    "count": 64,
+    "average_score": 4.2,
+    "comment1": "대기업 계열사라 기본적인 복지는 다 있는편",
+    "comment2": "사내카페 이용이 자유로워서 직원들이 많이 이용",
+    "comments": [
+      "대기업 계열사라 기본적인 복지는 다 있는편",
+      "사내카페 이용이 자유로워서 직원들이 많이 이용"
+    ]
+  },
+  {
+    "category_name": "Workload",
+    "count": 76,
+    "average_score": 3.2,
+    "comments": []
+  }
+]

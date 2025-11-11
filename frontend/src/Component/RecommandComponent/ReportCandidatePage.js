@@ -17,7 +17,6 @@ const ReportCandidatePage = forwardRef(
         </div>
       );
     }
-    const resume = candidate.resume || {};
 
     return (
       <div

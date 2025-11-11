@@ -1,0 +1,48 @@
+[
+  {
+    "category_name": "Teamculture",
+    "count": 62,
+    "average_score": 2.9412580645161293,
+    "comments": []
+  },
+  {
+    "category_name": "Evaluation",
+    "count": 58,
+    "average_score": 3.1864137931034486,
+    "comments": []
+  },
+  {
+    "category_name": "Pay Level",
+    "count": 41,
+    "average_score": 3.6451463414634144,
+    "comment1": "연봉, 안정적인 시스템이 갖춰짐.",
+    "comment2": "돈도 많이 주고요",
+    "comments": [
+      "연봉, 안정적인 시스템이 갖춰짐.",
+      "돈도 많이 주고요"
+    ]
+  },
+  {
+    "category_name": "Vision & Direction",
+    "count": 48,
+    "average_score": 2.2502291666666667,
+    "comments": []
+  },
+  {
+    "category_name": "Welfare Quality",
+    "count": 93,
+    "average_score": 4.351354838709677,
+    "comment1": "가전, 모바일 할인이나 삼시세끼 제공, 셔틀 제공, 사내 헬스장, 수영장 보유",
+    "comment2": "밥 테이크아웃 제도는 잘되어있음",
+    "comments": [
+      "가전, 모바일 할인이나 삼시세끼 제공, 셔틀 제공, 사내 헬스장, 수영장 보유",
+      "밥 테이크아웃 제도는 잘되어있음"
+    ]
+  },
+  {
+    "category_name": "Workload",
+    "count": 94,
+    "average_score": 2.6630851063829786,
+    "comments": []
+  }
+]

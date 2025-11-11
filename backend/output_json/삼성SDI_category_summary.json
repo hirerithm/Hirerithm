@@ -1,0 +1,48 @@
+[
+  {
+    "category_name": "Teamculture",
+    "count": 44,
+    "average_score": 2.8818863636363634,
+    "comments": []
+  },
+  {
+    "category_name": "Evaluation",
+    "count": 46,
+    "average_score": 2.8677608695652173,
+    "comments": []
+  },
+  {
+    "category_name": "Pay Level",
+    "count": 38,
+    "average_score": 3.501394736842105,
+    "comment1": "급여바로바로나오고 상여 👍👍👍 밥도 잘나옵니다",
+    "comment2": "돈을 많이준다",
+    "comments": [
+      "급여바로바로나오고 상여 👍👍👍 밥도 잘나옵니다",
+      "돈을 많이준다"
+    ]
+  },
+  {
+    "category_name": "Vision & Direction",
+    "count": 48,
+    "average_score": 2.3580833333333335,
+    "comments": []
+  },
+  {
+    "category_name": "Welfare Quality",
+    "count": 121,
+    "average_score": 4.172090909090909,
+    "comment1": "아침,점심,저녁 웰스토리에서 줍니다",
+    "comment2": "테이크아웃 통근버스 계약직도 성과금주는건 좋았습니다..",
+    "comments": [
+      "아침,점심,저녁 웰스토리에서 줍니다",
+      "테이크아웃 통근버스 계약직도 성과금주는건 좋았습니다.."
+    ]
+  },
+  {
+    "category_name": "Workload",
+    "count": 134,
+    "average_score": 2.805007462686567,
+    "comments": []
+  }
+]

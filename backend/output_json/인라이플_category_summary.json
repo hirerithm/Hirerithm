@@ -1,0 +1,48 @@
+[
+  {
+    "category_name": "Teamculture",
+    "count": 74,
+    "average_score": 2.7,
+    "comments": []
+  },
+  {
+    "category_name": "Evaluation",
+    "count": 19,
+    "average_score": 2.9,
+    "comments": []
+  },
+  {
+    "category_name": "Pay Level",
+    "count": 16,
+    "average_score": 3.3,
+    "comments": []
+  },
+  {
+    "category_name": "Vision & Direction",
+    "count": 67,
+    "average_score": 1.9,
+    "comments": []
+  },
+  {
+    "category_name": "Welfare Quality",
+    "count": 64,
+    "average_score": 4.1,
+    "comment1": "점심시간 두시간",
+    "comment2": "페이코 식대, 작은 복지 등 .. .",
+    "comments": [
+      "점심시간 두시간",
+      "페이코 식대, 작은 복지 등 .. ."
+    ]
+  },
+  {
+    "category_name": "Workload",
+    "count": 76,
+    "average_score": 3.5,
+    "comment1": "주 4일근무",
+    "comment2": "금요일 오전 근무만 한다.",
+    "comments": [
+      "주 4일근무",
+      "금요일 오전 근무만 한다."
+    ]
+  }
+]

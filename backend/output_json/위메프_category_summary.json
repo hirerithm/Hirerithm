@@ -1,0 +1,48 @@
+[
+  {
+    "category_name": "Teamculture",
+    "count": 74,
+    "average_score": 3.5,
+    "comments": []
+  },
+  {
+    "category_name": "Evaluation",
+    "count": 19,
+    "average_score": 3.3,
+    "comments": []
+  },
+  {
+    "category_name": "Pay Level",
+    "count": 16,
+    "average_score": 3.3615,
+    "comments": []
+  },
+  {
+    "category_name": "Vision & Direction",
+    "count": 67,
+    "average_score": 2.087626865671642,
+    "comments": []
+  },
+  {
+    "category_name": "Welfare Quality",
+    "count": 64,
+    "average_score": 4.2,
+    "comment1": "역세권, 사내 자판기, 근무하던 사람들이 수평적관계입니다",
+    "comment2": "피자데이, 생일반차, 반반차제도, 수평문화 등 전반적으로 좋았음",
+    "comments": [
+      "역세권, 사내 자판기, 근무하던 사람들이 수평적관계입니다",
+      "피자데이, 생일반차, 반반차제도, 수평문화 등 전반적으로 좋았음"
+    ]
+  },
+  {
+    "category_name": "Workload",
+    "count": 76,
+    "average_score": 3.7,
+    "comment1": "워라벨을 지킬수 있었고 출근하기 좋은 위치에 사무실이 있었습니다",
+    "comment2": "적은 근무량과 좋은 동료들. 그리고 잘 갖춰진 인프라 시스템",
+    "comments": [
+      "워라벨을 지킬수 있었고 출근하기 좋은 위치에 사무실이 있었습니다",
+      "적은 근무량과 좋은 동료들. 그리고 잘 갖춰진 인프라 시스템"
+    ]
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "category_name": "Teamculture",
+    "count": 74,
+    "average_score": 3.7,
+    "comment1": "좋은팀장님을 만난탓인가 엄청 친절하셔요",
+    "comment2": "부바부로 회사마다 다를 수 있으나 교육을 잘해줌",
+    "comments": [
+      "좋은팀장님을 만난탓인가 엄청 친절하셔요",
+      "부바부로 회사마다 다를 수 있으나 교육을 잘해줌"
+    ]
+  },
+  {
+    "category_name": "Evaluation",
+    "count": 19,
+    "average_score": 3.1,
+    "comments": []
+  },
+  {
+    "category_name": "Pay Level",
+    "count": 16,
+    "average_score": 2.8,
+    "comments": []
+  },
+  {
+    "category_name": "Vision & Direction",
+    "count": 67,
+    "average_score": 2.6,
+    "comments": []
+  },
+  {
+    "category_name": "Welfare Quality",
+    "count": 64,
+    "average_score": 3.3,
+    "comments": []
+  },
+  {
+    "category_name": "Workload",
+    "count": 76,
+    "average_score": 3.8,
+    "comment1": "업무 특성상 근무시간 외 업무 관련 연락이 오거나 집에서 업무할일이 없는게 거의 유일한 장점",
+    "comment2": "야근이없었음",
+    "comments": [
+      "업무 특성상 근무시간 외 업무 관련 연락이 오거나 집에서 업무할일이 없는게 거의 유일한 장점",
+      "야근이없었음"
+    ]
+  }
+]

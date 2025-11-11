@@ -1,0 +1,48 @@
+[
+  {
+    "category_name": "Teamculture",
+    "count": 74,
+    "average_score": 3.7,
+    "comments": []
+  },
+  {
+    "category_name": "Evaluation",
+    "count": 19,
+    "average_score": 3.1,
+    "comments": []
+  },
+  {
+    "category_name": "Pay Level",
+    "count": 16,
+    "average_score": 3.4,
+    "comments": []
+  },
+  {
+    "category_name": "Vision & Direction",
+    "count": 67,
+    "average_score": 2.9,
+    "comments": []
+  },
+  {
+    "category_name": "Welfare Quality",
+    "count": 64,
+    "average_score": 4.4,
+    "comment1": "복지와 연봉이 좋았음.",
+    "comment2": "신세계 복지 혜택을 받는다는 점",
+    "comments": [
+      "복지와 연봉이 좋았음.",
+      "신세계 복지 혜택을 받는다는 점"
+    ]
+  },
+  {
+    "category_name": "Workload",
+    "count": 76,
+    "average_score": 4.1,
+    "comment1": "워라밸 정말 완벽했습니다. 퇴근 시간 이후에 연락 없었음. 일이 많지 않음 ",
+    "comment2": "유연근무제",
+    "comments": [
+      "워라밸 정말 완벽했습니다. 퇴근 시간 이후에 연락 없었음. 일이 많지 않음 ",
+      "유연근무제"
+    ]
+  }
+]

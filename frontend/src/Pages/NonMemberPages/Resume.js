@@ -12,6 +12,9 @@ import TestResult from "../../Component/NonMemberComponent/TestResult";
 import CompanyTest from "../../Component/NonMemberComponent/CompanyTest";
 import { AnimatePresence, motion } from "framer-motion";
 
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+
 const Resume = ({ resumeData, dispatch }) => {
   const [showCompanyTest, setShowCompanyTest] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
@@ -23,6 +26,60 @@ const Resume = ({ resumeData, dispatch }) => {
   useEffect(() => {
     setHasMounted(true);
   }, []);
+
+  const handleDownloadPDF = async () => {
+    const resumeElement = document.getElementById("resume-container");
+
+    if (!resumeElement) {
+      alert("PDF 생성 실패: 이력서가 로드되지 않았습니다.");
+      return;
+    }
+
+    const canvas = await html2canvas(resumeElement, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    // 캔버스 전체 높이
+    const canvasHeight = canvas.height;
+    const canvasWidth = canvas.width;
+
+    // 한 페이지에 들어갈 비율 계산
+    const ratio = canvasWidth / pdfWidth;
+    const pageHeight = pdfHeight * ratio;
+
+    let position = 0;
+
+    while (position < canvasHeight) {
+      const pageCanvas = document.createElement("canvas");
+      pageCanvas.width = canvas.width;
+      pageCanvas.height = Math.min(pageHeight, canvasHeight - position);
+
+      const pageCtx = pageCanvas.getContext("2d");
+      pageCtx.drawImage(
+        canvas,
+        0,
+        position,
+        canvas.width,
+        pageCanvas.height,
+        0,
+        0,
+        canvas.width,
+        pageCanvas.height
+      );
+
+      const pageData = pageCanvas.toDataURL("image/png");
+
+      if (position > 0) pdf.addPage();
+      pdf.addImage(pageData, "PNG", 0, 0, pdfWidth, pageCanvas.height / ratio);
+
+      position += pageHeight;
+    }
+
+    pdf.save("이력서.pdf");
+  };
 
   const handleStartTest = () => {
     window.scrollTo(0, 0);
@@ -106,6 +163,7 @@ const Resume = ({ resumeData, dispatch }) => {
           console.log("추출된 키워드:", keywordResult.keywords);
         }
         alert("이력서가 성공적으로 제출되었습니다!");
+        handleDownloadPDF();
       } else {
         alert("제출 실패: 서버 오류");
       }
@@ -116,149 +174,151 @@ const Resume = ({ resumeData, dispatch }) => {
   };
 
   return (
-    <div className="resume-container">
+    <>
       <NotMemberNavigation />
-
-      <AnimatePresence mode="wait">
-        {showCompanyTest ? (
-          <motion.div
-            key="company-test"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 50 }}
-            transition={{ duration: 0.4 }}
-          >
-            <CompanyTest onBackToResume={handleBackToResume} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="resume"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.4 }}
-          >
-            <div>
-              <header>
-                <div className="image-recommend_page-index-wrapper">
-                  <img src={FileLogo} alt="-" />
-                  <h2>이력서 등록</h2>
-                </div>
-                <p>
-                  ' <strong>*</strong> ' 표시되어있는 항목은 필수 항목입니다!
-                  필수가 아닌 항목도 자세히 작성할수록 기업과 매칭 확률이
-                  올라갑니다!
-                </p>
-                <p>
-                  <strong>입력하신 내용은 자동 저장 됩니다.</strong> 따라서 같은
-                  기기로 접속하실경우, 입력 내용이 그대로 유지됩니다.
-                </p>
-              </header>
-
-              <main className="resume-main">
-                <label className="resume-title-label">인적사항</label>
-                <PersonalData
-                  initialData={resumeData.personalData}
-                  onChange={(data) =>
-                    dispatch({ type: "SET_PERSONAL", payload: data })
-                  }
-                />
-
-                <label className="resume-title-label">학력</label>
-                <Education
-                  initialData={resumeData.education}
-                  onChange={(data) =>
-                    dispatch({ type: "SET_EDUCATION", payload: data })
-                  }
-                />
-
-                <div className="experience-label">
-                  <label className="resume-title-label">경력</label>
+      <div id="resume-container" className="resume-container">
+        <AnimatePresence mode="wait">
+          {showCompanyTest ? (
+            <motion.div
+              key="company-test"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 50 }}
+              transition={{ duration: 0.4 }}
+            >
+              <CompanyTest onBackToResume={handleBackToResume} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="resume"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.4 }}
+            >
+              <div>
+                <header>
+                  <div className="image-recommend_page-index-wrapper">
+                    <img src={FileLogo} alt="-" />
+                    <h2>이력서 등록</h2>
+                  </div>
                   <p>
-                    직무명, 직무내용은 자세히 입력할수록 매칭 확률이 올라갑니다!
+                    ' <strong>*</strong> ' 표시되어있는 항목은 필수 항목입니다!
+                    필수가 아닌 항목도 자세히 작성할수록 기업과 매칭 확률이
+                    올라갑니다!
                   </p>
-                </div>
-                <Experience
-                  initialData={resumeData.career}
-                  onChange={(data) =>
-                    dispatch({ type: "SET_CAREER", payload: data })
-                  }
-                />
+                  <p>
+                    <strong>입력하신 내용은 자동 저장 됩니다.</strong> 따라서
+                    같은 기기로 접속하실경우, 입력 내용이 그대로 유지됩니다.
+                  </p>
+                </header>
 
-                <label className="resume-title-label">자격증</label>
-                <License
-                  initialData={resumeData.certificates}
-                  onChange={(data) =>
-                    dispatch({ type: "SET_CERTIFICATES", payload: data })
-                  }
-                />
+                <main className="resume-main">
+                  <label className="resume-title-label">인적사항</label>
+                  <PersonalData
+                    initialData={resumeData.personalData}
+                    onChange={(data) =>
+                      dispatch({ type: "SET_PERSONAL", payload: data })
+                    }
+                  />
 
-                <div className="skills-label">
-                  <label className="resume-title-label">SKILLS</label>
-                  <p>Language / Web FE & BE / DB / DevOps & Cloud / Tool</p>
-                </div>
-                <Skills
-                  initialData={resumeData.skills}
-                  onChange={(data) =>
-                    dispatch({ type: "SET_SKILLS", payload: data })
-                  }
-                />
-                <div className="others-label">
-                  <label className="resume-title-label">기타</label>
-                  <p>병역사항, 건강상태 등을 자유롭게 작성해주세요!</p>
-                </div>
+                  <label className="resume-title-label">학력</label>
+                  <Education
+                    initialData={resumeData.education}
+                    onChange={(data) =>
+                      dispatch({ type: "SET_EDUCATION", payload: data })
+                    }
+                  />
 
-                <Other
-                  initialData={resumeData.otherinfo}
-                  onChange={(data) =>
-                    dispatch({ type: "SET_OTHERINFO", payload: data })
-                  }
-                />
+                  <div className="experience-label">
+                    <label className="resume-title-label">경력</label>
+                    <p>
+                      직무명, 직무내용은 자세히 입력할수록 매칭 확률이
+                      올라갑니다!
+                    </p>
+                  </div>
+                  <Experience
+                    initialData={resumeData.career}
+                    onChange={(data) =>
+                      dispatch({ type: "SET_CAREER", payload: data })
+                    }
+                  />
 
-                <div className="test-result-label">
-                  <label className="resume-title-label">맞춤기업 TEST</label>
-                  <p>나와 잘 맞는 기업과 매칭될 확률을 높여보세요!</p>
-                </div>
-                <TestResult
-                  onStartTest={handleStartTest}
-                  scores={
-                    typeof resumeData.companyTest === "string"
-                      ? JSON.parse(resumeData.companyTest)
-                      : resumeData.companyTest
-                  }
-                  onChange={(data) =>
-                    dispatch({
-                      type: "SET_COMPANYTEST",
-                      payload: data.companyTest,
-                    })
-                  }
-                />
+                  <label className="resume-title-label">자격증</label>
+                  <License
+                    initialData={resumeData.certificates}
+                    onChange={(data) =>
+                      dispatch({ type: "SET_CERTIFICATES", payload: data })
+                    }
+                  />
 
-                <div className="resume-signature-section">
-                  <p>본 지원서의 내용은 사실이며 본인이 작성하였습니다.</p>
-                  <div className="signature-author">
-                    <label>
-                      작성자<strong>*</strong>:
-                    </label>
-                    <input
-                      type="text"
-                      value={author}
-                      onChange={(e) => setAuthor(e.target.value)}
-                      placeholder="작성자명 입력"
-                    />
+                  <div className="skills-label">
+                    <label className="resume-title-label">SKILLS</label>
+                    <p>Language / Web FE & BE / DB / DevOps & Cloud / Tool</p>
+                  </div>
+                  <Skills
+                    initialData={resumeData.skills}
+                    onChange={(data) =>
+                      dispatch({ type: "SET_SKILLS", payload: data })
+                    }
+                  />
+                  <div className="others-label">
+                    <label className="resume-title-label">기타</label>
+                    <p>병역사항, 건강상태 등을 자유롭게 작성해주세요!</p>
                   </div>
 
-                  <div className="signature-buttons">
-                    <button onClick={handleSubmitResume}>제출</button>
-                    <button>취소</button>
+                  <Other
+                    initialData={resumeData.otherinfo}
+                    onChange={(data) =>
+                      dispatch({ type: "SET_OTHERINFO", payload: data })
+                    }
+                  />
+
+                  <div className="test-result-label">
+                    <label className="resume-title-label">맞춤기업 TEST</label>
+                    <p>나와 잘 맞는 기업과 매칭될 확률을 높여보세요!</p>
                   </div>
-                </div>
-              </main>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+                  <TestResult
+                    onStartTest={handleStartTest}
+                    scores={
+                      typeof resumeData.companyTest === "string"
+                        ? JSON.parse(resumeData.companyTest)
+                        : resumeData.companyTest
+                    }
+                    onChange={(data) =>
+                      dispatch({
+                        type: "SET_COMPANYTEST",
+                        payload: data.companyTest,
+                      })
+                    }
+                  />
+
+                  <div className="resume-signature-section">
+                    <p>본 지원서의 내용은 사실이며 본인이 작성하였습니다.</p>
+                    <div className="signature-author">
+                      <label>
+                        작성자<strong>*</strong>:
+                      </label>
+                      <input
+                        type="text"
+                        value={author}
+                        onChange={(e) => setAuthor(e.target.value)}
+                        placeholder="작성자명 입력"
+                      />
+                    </div>
+
+                    <div className="signature-buttons">
+                      <button onClick={handleSubmitResume}>제출</button>
+                      <button>취소</button>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 };
 
