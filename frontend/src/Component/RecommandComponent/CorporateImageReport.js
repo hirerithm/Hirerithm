@@ -12,14 +12,14 @@ import { createRoot } from "react-dom/client";
 
 const CorporateImageReport = ({
   onBack,
-  resultsSummary,
-  candidates,
-  companySummary,
+  resultsSummary = [],
+  candidates = [],
+  companySummary = [],
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const contentRef = useRef([]);
-  const totalPages = 1 + candidates.length;
+  const totalPages = 1 + candidates.length || 0;
 
   useEffect(() => {
     contentRef.current.length = 0; // 렌더링 전에 비워줌
@@ -64,7 +64,6 @@ const CorporateImageReport = ({
             resultsSummary={resultsSummary[0]}
             isGeneratingPdf={true}
             companySummary={companySummary}
-            
           />
         </PageWrapper>
 

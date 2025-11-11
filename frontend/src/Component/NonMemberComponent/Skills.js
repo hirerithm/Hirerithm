@@ -45,6 +45,14 @@ const Skills = ({ initialData = [], onChange }) => {
               value={item.skill}
               onChange={(e) => handleChange(index, e.target.value)}
             />
+            {/* X 버튼 추가 
+            <button
+              type="button"
+              className="delete-button-top"
+              onClick={() => removeSkill(index)}
+            >
+              <img src={DeleteIcon} alt="삭제" />
+            </button>*/}
           </div>
         ))}
         <button onClick={addSkill} className="plus-button">

@@ -10,6 +10,15 @@ const ReportCandidatePage = forwardRef(
       getContent: () => localRef.current,
     }));
 
+    if (!candidate) {
+      return (
+        <div ref={localRef} className="report-candidate-page">
+          <p>후보자 정보가 없습니다.</p>
+        </div>
+      );
+    }
+    const resume = candidate.resume || {};
+
     return (
       <div
         ref={localRef}
